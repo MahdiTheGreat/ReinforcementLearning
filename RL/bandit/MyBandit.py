@@ -5,7 +5,7 @@ class Bandit:
     """
     Generic epsilon-greedy bandit that you need to improve
     """
-    def __init__(self, arms, epsilon=0.1):
+    def __init__(self, arms, epsilon=0.7):
         """
         Initiates the bandits
 
@@ -17,6 +17,8 @@ class Bandit:
         self.frequencies = [0] * len(arms)
         self.sums = [0] * len(arms)
         self.expected_values = [0] * len(arms)
+        self.epsilon_decay=0.9
+
 
     def run(self):
         """
@@ -27,6 +29,7 @@ class Bandit:
         if min(self.frequencies) == 0:
             return self.arms[self.frequencies.index(min(self.frequencies))]
         if random.random() < self.epsilon:
+            self.epsilon *= self.epsilon_decay
             return self.arms[random.randint(0, len(self.arms) - 1)]
         return self.arms[self.expected_values.index(max(self.expected_values))]
 
@@ -42,5 +45,6 @@ class Bandit:
         self.sums[arm_index] = sum
         frequency = self.frequencies[arm_index] + 1
         self.frequencies[arm_index] = frequency
+        # for normalization and considering the number of arm pulls
         expected_value = sum / frequency
         self.expected_values[arm_index] = expected_value

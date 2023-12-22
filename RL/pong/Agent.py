@@ -15,7 +15,8 @@ def reshape_obs(observation):
     """
     # TODO: Discretize/simplify
     # transformation
-    return f'{numpy.asarray(observation).reshape(-1, 10)}'
+    # return f'{numpy.asarray(observation).reshape(-1, 10)}'
+    return f'{numpy.rint(numpy.asarray(observation).reshape(-1, 10))}'
 
 
 class Agent:
@@ -33,7 +34,6 @@ class Agent:
     ):
         """
         Initiates the agent
-
         :param id: The agent's id in the game environment
         :param actions_n: The id of actions in the agent's action space
         :param obs_space_shape: The shape of the agents observation space
@@ -61,8 +61,17 @@ class Agent:
         :return: The probabilities for each action in the form of a numpy
         array of length of the action space.
         """
-        # Did we have probabilities in q-learning?
+        probs_dict={}
+        best_action='up'
+        best_choice_prob=1-self.epsilon
+        probs_dict[best_action]=best_choice_prob
+        remaining_actions=self.actions_n - best_action
+        for action in remaining_actions:
+            probs_dict[action]=self.epsilon/len(remaining_actions)
+
         # TODO: implement this!
+        print(observation)
+
         return # action_probabilities
 
     def act(self, observation):
@@ -72,8 +81,14 @@ class Agent:
         the world
         :return: the agent's action
         """
+        probs=self.determine_action_probabilities(observation)
+        """
+        if random.random() < self.epsilon:
+            self.epsilon *= self.epsilon_decay
+            return self.arms[random.randint(0, len(self.arms) - 1)]
+        return self.arms[self.expected_values.index(max(self.expected_values))]
+        """
         # TODO: implement this! Here, you will need to call
-        # `determine_action_probabilities(observation)`
         return random.randint(0,2)
 
     def update_history(

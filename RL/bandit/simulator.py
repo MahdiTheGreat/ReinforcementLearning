@@ -50,6 +50,5 @@ def simulate(bandit, iterations):
         arm = bandit.run()
         current_reward = generate_reward(bandit.arms.index(arm), expected_rewards_approx)
         bandit.give_feedback(arm, current_reward)
-    #print('Frequencies')
-    #print(bandit.frequencies)
     return sum(bandit.sums)
+
