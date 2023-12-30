@@ -1,6 +1,6 @@
-import numpy
 import random
 from collections import defaultdict
+import numpy as np
 
 
 def reshape_obs(observation):
@@ -15,8 +15,11 @@ def reshape_obs(observation):
     """
     # TODO: Discretize/simplify
     # transformation
-    # return f'{numpy.asarray(observation).reshape(-1, 10)}'
-    return f'{numpy.rint(numpy.asarray(observation).reshape(-1, 10))}'
+    # return f'{np.asarray(observation).reshape(-1, 10)}'
+    pass
+    temp=f'{np.rint(np.asarray(observation).reshape(-1, 10))}'
+    pass
+    return temp
 
 
 class Agent:
@@ -27,10 +30,10 @@ class Agent:
     def __init__(
             self, id, actions_n, obs_space_shape,
             gamma=1, # pick reasonable values for all of these!
-            epsilon=1,
-            min_epsilon=1,
-            epsilon_decay=1,
-            alpha=1
+            epsilon=0.7,
+            min_epsilon=0.01,
+            epsilon_decay=0.9,
+            alpha=0.1
     ):
         """
         Initiates the agent
@@ -51,28 +54,28 @@ class Agent:
         self.actions_n = actions_n
         self.obs_space_shape = obs_space_shape
         self.alpha = alpha
-        self.q = defaultdict(lambda: numpy.zeros(self.actions_n))
+        self.q = defaultdict(lambda: np.zeros(self.actions_n))
+        pass
+        # self.q = {i:0 for i in range(self.actions_n)}
 
     def determine_action_probabilities(self, observation):
         """
         A function that takes the state as an input and returns the probabilities for each
-        action in the form of a numpy array of length of the action space.
+        action in the form of a np array of length of the action space.
         :param observation: The agent's current observation
-        :return: The probabilities for each action in the form of a numpy
+        :return: The probabilities for each action in the form of a np
         array of length of the action space.
         """
-        probs_dict={}
-        best_action='up'
-        best_choice_prob=1-self.epsilon
-        probs_dict[best_action]=best_choice_prob
-        remaining_actions=self.actions_n - best_action
-        for action in remaining_actions:
-            probs_dict[action]=self.epsilon/len(remaining_actions)
+        action_probabilities=[]
+        #best_action=list(self.q.keys())[list(self.q.values()).index(max(self.q.values()))]
+        best_action = np.argmax(self.q[reshape_obs(observation)])
+        for action in range(self.actions_n):
+            if action==best_action:
+                action_probabilities.append(1-self.epsilon)
+            else:
+                action_probabilities.append(self.epsilon/(self.actions_n-1))
 
-        # TODO: implement this!
-        print(observation)
-
-        return # action_probabilities
+        return np.asarray(action_probabilities)
 
     def act(self, observation):
         """
@@ -81,15 +84,15 @@ class Agent:
         the world
         :return: the agent's action
         """
-        probs=self.determine_action_probabilities(observation)
-        """
-        if random.random() < self.epsilon:
+        action_probabilities=self.determine_action_probabilities(observation)
+        pass
+        best_action=list(action_probabilities).index(1-self.epsilon)
+        pass
+        selected_action=random.choices(population=[i for i in range(self.actions_n)],weights=action_probabilities,k=1)[0]
+        pass
+        if selected_action!=best_action:
             self.epsilon *= self.epsilon_decay
-            return self.arms[random.randint(0, len(self.arms) - 1)]
-        return self.arms[self.expected_values.index(max(self.expected_values))]
-        """
-        # TODO: implement this! Here, you will need to call
-        return random.randint(0,2)
+        return selected_action
 
     def update_history(
             self, observation, action, reward, new_observation
@@ -104,7 +107,7 @@ class Agent:
         :return:
         """
         # counterfactual next action, to later backpropagate reward to current action
-        next_action = numpy.argmax(self.q[reshape_obs(new_observation)])
+        next_action = np.argmax(self.q[reshape_obs(new_observation)])
         td_target = reward + self.gamma * self.q[reshape_obs(new_observation)][next_action]
         td_delta = td_target - self.q[reshape_obs(observation)][action]
         self.q[reshape_obs(observation)][action] += self.alpha * td_delta

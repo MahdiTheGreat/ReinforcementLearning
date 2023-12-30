@@ -28,7 +28,6 @@ if __name__ == '__main__':
     env = gym.make(args.env)
     env = Monitor(env, directory='recordings/' + args.env, force=True)
     action_meanings = env.get_action_meanings()
-    print(env.observation_space[0].shape)
     # Initialize agents
     my_agent = Agent(0, env.action_space[0].n, env.observation_space[0].shape)
     agents = [
