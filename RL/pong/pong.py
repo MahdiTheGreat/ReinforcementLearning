@@ -2,7 +2,7 @@ import argparse
 
 import gym
 from ma_gym.wrappers import Monitor
-# import matplotlib.pyplot as plt # plotting dependency
+import matplotlib.pyplot as plt # plotting dependency
 
 from Agent import Agent
 from RandomAgent import RandomAgent
@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
         env.seed(ep_i)
         prev_observations = env.reset()
-        env.render()
+        #env.render()
 
         while not all(are_done):
             # Observe:
@@ -78,7 +78,7 @@ if __name__ == '__main__':
             # if not (rewards[0] == 0 and rewards[1] == 0): print(rewards)
             for (index, reward) in enumerate(rewards):
                 ep_rewards[index] += reward
-            env.render()
+            #env.render()
         # Aggregate wins and losses
         bottom_line = ep_rewards[0]
         if bottom_line < 0:
@@ -95,9 +95,9 @@ if __name__ == '__main__':
         if len(wins) > 10:
             print(f'Last 10 games: {sum(wins[-10:]) - sum(losses[-10:])}')
         # remove comments for a primitive plot; also remove comment for dependency (line 5)!
-        # plt.clf()
-        # plt.cla()
-        # plt.close()
-        # plt.plot(win_loss_history)
-        # plt.pause(0.1)
+        plt.clf()
+        plt.cla()
+        plt.close()
+        plt.plot(win_loss_history)
+        plt.pause(0.1)
     env.close()
