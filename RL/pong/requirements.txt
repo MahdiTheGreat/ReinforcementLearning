@@ -1,6 +1,6 @@
+setuptools==65.5.0
+pip==21
 git+https://github.com/TimKam/ma-gym.git
 matplotlib
 numpy
 pyglet==1.5.11
-setuptools==65.5.0
-pip==21
