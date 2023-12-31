@@ -95,9 +95,9 @@ if __name__ == '__main__':
         if len(wins) > 10:
             print(f'Last 10 games: {sum(wins[-10:]) - sum(losses[-10:])}')
         # remove comments for a primitive plot; also remove comment for dependency (line 5)!
-        plt.clf()
-        plt.cla()
-        plt.close()
-        plt.plot(win_loss_history)
-        plt.pause(0.1)
+    plt.clf()
+    plt.cla()
+    plt.close()
+    plt.plot(win_loss_history)
+    plt.pause(0.1)
     env.close()
