@@ -7,6 +7,8 @@ RL/bandit/__pycache__/**
 RL/bandit/.pytest_cache/**
 playground.py
 *.pickle
+win_loss_history_plot.png
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
