@@ -2,10 +2,11 @@ import argparse
 
 import gym
 from ma_gym.wrappers import Monitor
-import matplotlib.pyplot as plt # plotting dependency
+import matplotlib.pyplot as plt
 
 from Agent import Agent
 from RandomAgent import RandomAgent
+import pickle
 
 """
 Based on:
@@ -16,20 +17,8 @@ use of the ``Agent`` class. Nothing in this file needs to be changed, but
 you can make changes for debugging purposes.
 """
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Pong simulator for ma-gym')
-    parser.add_argument('--env', default='PongDuel-v0',
-                        help='Name of the environment (default: %(default)s)')
-    parser.add_argument('--episodes', type=int, default=550,
-                        help='episodes (default: %(default)s)')
-    args = parser.parse_args()
+def pong_agent_trainer(my_agent,env,episodes,render_env=True):
 
-    # Set up environment
-    env = gym.make(args.env)
-    env = Monitor(env, directory='recordings/' + args.env, force=True)
-    action_meanings = env.get_action_meanings()
-    # Initialize agents
-    my_agent = Agent(0, env.action_space[0].n, env.observation_space[0].shape)
     agents = [
         my_agent,
         RandomAgent(1)
@@ -42,13 +31,13 @@ if __name__ == '__main__':
     losses = []
     win_loss_history = []
     # Run for a number of episodes
-    for ep_i in range(args.episodes):
+    for ep_i in range(episodes):
         are_done = [False for _ in range(env.n_agents)]
         ep_rewards = [0, 0]
 
         env.seed(ep_i)
         prev_observations = env.reset()
-        #env.render()
+        if render_env:env.render()
 
         while not all(are_done):
             # Observe:
@@ -78,7 +67,7 @@ if __name__ == '__main__':
             # if not (rewards[0] == 0 and rewards[1] == 0): print(rewards)
             for (index, reward) in enumerate(rewards):
                 ep_rewards[index] += reward
-            #env.render()
+            if render_env: env.render()
         # Aggregate wins and losses
         bottom_line = ep_rewards[0]
         if bottom_line < 0:
@@ -94,10 +83,44 @@ if __name__ == '__main__':
         print(f'Q table size: {len(my_agent.q)}')
         if len(wins) > 10:
             print(f'Last 10 games: {sum(wins[-10:]) - sum(losses[-10:])}')
-        # remove comments for a primitive plot; also remove comment for dependency (line 5)!
-    plt.clf()
-    plt.cla()
-    plt.close()
-    plt.plot(win_loss_history)
-    plt.pause(0.1)
-    env.close()
+    return win_loss_history
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Pong simulator for ma-gym')
+    parser.add_argument('--env', default='PongDuel-v0',
+                        help='Name of the environment (default: %(default)s)')
+    parser.add_argument('--episodes', type=int, default=1,
+                        help='episodes (default: %(default)s)')
+    parser.add_argument('--qTable', type=str, default=None,
+                        help='qtable (default: %(default)s)')
+    parser.add_argument('-r', '--render', action='store_true', help='render the environment')
+
+    # Parse the arguments
+    args = parser.parse_args()
+
+    # Set up environment
+    env = gym.make(args.env)
+    env = Monitor(env, directory='recordings/' + args.env, force=True)
+    action_meanings = env.get_action_meanings()
+    # Initialize agents
+    my_agent = Agent(0, env.action_space[0].n, env.observation_space[0].shape)
+    qTable=my_agent.q
+    if args.qTable:
+     try:
+      with open(args.qTable+'.pickle', 'rb') as f:
+          qTable = pickle.load(f)
+     except FileNotFoundError:
+         print("qTable file doesn't exit, therefore it's going to be created")
+    my_agent.q=qTable
+    win_loss_history=pong_agent_trainer(my_agent=my_agent,env=env,episodes=args.episodes,render_env=args.render)
+
+    if args.episodes>1:
+     with open(args.qTable+'.pickle', 'wb') as f:
+         pickle.dump(dict(my_agent.q), f)
+     plt.clf()
+     plt.cla()
+     plt.close()
+     plt.plot(win_loss_history)
+     plt.pause(0.1)
+     env.close()

@@ -2,7 +2,6 @@ import random
 from collections import defaultdict
 import numpy as np
 
-
 def reshape_obs(observation):
     """
     Reshapes and 'discretizes' an observation for Q-table read/write
@@ -55,8 +54,6 @@ class Agent:
         self.obs_space_shape = obs_space_shape
         self.alpha = alpha
         self.q = defaultdict(lambda: np.zeros(self.actions_n))
-        pass
-        # self.q = {i:0 for i in range(self.actions_n)}
 
     def determine_action_probabilities(self, observation):
         """
@@ -67,7 +64,6 @@ class Agent:
         array of length of the action space.
         """
         action_probabilities=[]
-        #best_action=list(self.q.keys())[list(self.q.values()).index(max(self.q.values()))]
         best_action = np.argmax(self.q[reshape_obs(observation)])
         for action in range(self.actions_n):
             if action==best_action:
@@ -85,13 +81,8 @@ class Agent:
         :return: the agent's action
         """
         action_probabilities=self.determine_action_probabilities(observation)
-        pass
-        best_action=list(action_probabilities).index(1-self.epsilon)
-        pass
         selected_action=random.choices(population=[i for i in range(self.actions_n)],weights=action_probabilities,k=1)[0]
-        pass
-        if selected_action!=best_action:
-            self.epsilon *= self.epsilon_decay
+        self.epsilon *= self.epsilon_decay
         return selected_action
 
     def update_history(

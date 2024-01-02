@@ -6,6 +6,7 @@ RL/pong/recordings/**
 RL/bandit/__pycache__/**
 RL/bandit/.pytest_cache/**
 playground.py
+*.pickle
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

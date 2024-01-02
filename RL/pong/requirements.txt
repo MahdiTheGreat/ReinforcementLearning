@@ -1,3 +1,4 @@
+# first install setuptools and pip and then install the remaining requirements
 setuptools==65.5.0
 pip==21
 git+https://github.com/TimKam/ma-gym.git
