@@ -45,4 +45,6 @@ def test_performance():
     """
     Checks if the simulation is good enough to pass
     """
-    assert sum(simulate()) > 15
+    temp=sum(simulate())
+    print("\nthe MyBandit Score is "+str(temp))
+    assert  temp> 15

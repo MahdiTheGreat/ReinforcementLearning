@@ -82,7 +82,9 @@ class Agent:
         """
         action_probabilities=self.determine_action_probabilities(observation)
         selected_action=random.choices(population=[i for i in range(self.actions_n)],weights=action_probabilities,k=1)[0]
-        self.epsilon *= self.epsilon_decay
+        temp=self.epsilon_decay*self.epsilon
+        if temp>self.min_epsilon:
+            self.epsilon=temp
         return selected_action
 
     def update_history(
