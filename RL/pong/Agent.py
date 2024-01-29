@@ -22,9 +22,7 @@ def reshape_obs(observation):
 
 
 class Agent:
-    """
-    Skeleton q-learner agent that the students have to implement
-    """
+
 
     def __init__(
             self, id, actions_n, obs_space_shape,

@@ -2,9 +2,7 @@
 import random
 
 class Bandit:
-    """
-    Generic epsilon-greedy bandit that you need to improve
-    """
+
     def __init__(self, arms, epsilon=0.7):
         """
         Initiates the bandits
@@ -43,8 +41,9 @@ class Bandit:
         arm_index = self.arms.index(arm)
         sum = self.sums[arm_index] + reward
         self.sums[arm_index] = sum
+		# frequency is the number of arm pulls
         frequency = self.frequencies[arm_index] + 1
         self.frequencies[arm_index] = frequency
-        # for normalization and considering the number of arm pulls
+        # using frequency to normalize expected value 
         expected_value = sum / frequency
         self.expected_values[arm_index] = expected_value
