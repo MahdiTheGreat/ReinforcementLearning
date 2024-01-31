@@ -101,7 +101,7 @@ if __name__ == '__main__':
 
     # Set up environment
     env = gym.make(args.env)
-    video_callable=lambda ep: ep==args.episodes
+    video_callable=lambda ep: ep==(args.episodes-1)
     env = Monitor(env, directory='recordings/' + args.env,video_callable=video_callable,force=True)
     action_meanings = env.get_action_meanings()
     # Initialize agents
